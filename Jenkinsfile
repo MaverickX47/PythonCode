@@ -1,21 +1,39 @@
 pipeline {
     agent any
-
     stages {
         stage('Build') {
             steps {
-                echo 'Building..'
+                echo 'Building...'
+                // Simulate build failure for testing
+                script {
+                    currentBuild.result = 'FAILURE'
+                }
             }
         }
         stage('Test') {
             steps {
-                echo 'Testing..'
+                echo 'Testing...'
             }
         }
         stage('Deploy') {
             steps {
-                echo 'Deploying....'
+                echo 'Deploying...'
             }
+        }
+    }
+    post {
+        always {
+            emailext(
+                to: 'siddhant.satra@gmail.com',
+                subject: "Build ${currentBuild.fullDisplayName} - ${currentBuild.result}",
+                body: """
+                    Build details:
+                    - Job: ${env.JOB_NAME}
+                    - Build Number: ${env.BUILD_NUMBER}
+                    - Status: ${currentBuild.result}
+                    - View the build log: ${env.BUILD_URL}
+                """
+            )
         }
     }
 }
