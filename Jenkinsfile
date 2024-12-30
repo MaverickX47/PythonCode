@@ -5,6 +5,9 @@ pipeline {
             steps {
                 echo 'Building...'
                 // Simulate build failure for testing
+                script {
+                    currentBuild.result = 'Success'
+                }
             }
         }
         stage('Test') {
